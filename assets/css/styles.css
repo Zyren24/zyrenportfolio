@@ -36,6 +36,10 @@ body {
   overflow-y: auto;
 }
 
+.panels-ready body {
+  overflow: hidden;
+}
+
 .scroll-progress {
   position: fixed;
   top: 0;
@@ -166,7 +170,7 @@ main {
   margin-top: 0;
   padding: calc(var(--panel-padding) + var(--section-top-gap)) var(--panel-padding) var(--panel-padding);
   display: block;
-  overflow: visible;
+  overflow-y: auto;
   scrollbar-width: thin;
   background: transparent;
   border: none;
@@ -1154,17 +1158,21 @@ h1 span {
     height: 488px;
   }
 
-  body {
+  body,
+  .panels-ready body {
     overflow-y: auto;
   }
 
-  main {
+  main,
+  .panels-ready main {
     height: auto;
     overflow: visible;
   }
 
-  .section {
+  .section,
+  .panels-ready .section {
     position: static;
+    inset: auto;
     opacity: 1;
     transform: none;
     pointer-events: auto;
