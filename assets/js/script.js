@@ -155,6 +155,8 @@ const canMoveDownFromPanel = (panel) => panel.scrollTop + panel.clientHeight >= 
 const canMoveUpFromPanel = (panel) => panel.scrollTop <= 2;
 
 const handleWheel = (event) => {
+  console.log('wheel:', event.deltaY);
+
   if (!panelModeEnabled || isMobileLayout() || isAnimating || !panels.length) {
     return;
   }
@@ -164,7 +166,7 @@ const handleWheel = (event) => {
   const activePanelId = panel ? panel.id : '';
   const useViewportWheelScroll = activePanelId === 'projects' || activePanelId === 'journey';
 
-  if (Math.abs(deltaY) < 12) {
+  if (Math.abs(deltaY) < 5) {
     return;
   }
 
@@ -576,7 +578,7 @@ const init = () => {
     updateProgress();
     updateDots();
 
-    window.addEventListener('wheel', handleWheel, { passive: false });
+    window.addEventListener('wheel', handleWheel, { passive: false, capture: true });
     window.addEventListener('touchstart', handleTouchStart, { passive: true });
     window.addEventListener('touchend', handleTouchEnd, { passive: true });
     window.addEventListener('keydown', handleKeyboard);
