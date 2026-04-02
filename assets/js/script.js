@@ -112,6 +112,23 @@ const updateSectionFitClasses = () => {
   });
 };
 
+const syncRevealVisibility = () => {
+  panels.forEach((panel, index) => {
+    const isActive = index === activeIndex;
+    const revealChildren = panel.querySelectorAll('.reveal-child');
+
+    revealChildren.forEach((child) => {
+      child.classList.toggle('reveal-visible', isActive);
+
+      // Keep active panel content readable even if an animation failed.
+      if (isActive) {
+        child.style.opacity = '1';
+        child.style.transform = 'none';
+      }
+    });
+  });
+};
+
 const goToPanel = (nextIndex, immediate = false) => {
   const clamped = Math.max(0, Math.min(nextIndex, panels.length - 1));
   if (clamped === activeIndex && !immediate) {
@@ -133,6 +150,7 @@ const goToPanel = (nextIndex, immediate = false) => {
   updateDots();
   updateProgress();
   updateHeaderState();
+  syncRevealVisibility();
 
   // Trigger animations for new panel
   if (activePanel && window.panelTimelines) {
@@ -151,41 +169,8 @@ const goToPanel = (nextIndex, immediate = false) => {
   }
 };
 
-const canMoveDownFromPanel = (panel) => {
-  if (!panel) {
-    return false;
-  }
-
-  return Math.ceil(panel.scrollTop + panel.clientHeight) >= panel.scrollHeight - 12;
-};
-
-const canMoveUpFromPanel = (panel) => {
-  if (!panel) {
-    return false;
-  }
-
-  return panel.scrollTop <= 12;
-};
-
-const syncActivePanelFromScroll = () => {
-  if (!panelModeEnabled || isMobileLayout() || !panels.length) {
-    return;
-  }
-
-  const panel = panels[activeIndex];
-  if (!panel) {
-    return;
-  }
-
-  if (canMoveUpFromPanel(panel) && activeIndex > 0) {
-    goToPanel(activeIndex - 1);
-    return;
-  }
-
-  if (canMoveDownFromPanel(panel) && activeIndex < panels.length - 1) {
-    goToPanel(activeIndex + 1);
-  }
-};
+const canMoveDownFromPanel = (panel) => panel.scrollTop + panel.clientHeight >= panel.scrollHeight - 4;
+const canMoveUpFromPanel = (panel) => panel.scrollTop <= 2;
 
 const handleWheel = (event) => {
   console.log('wheel:', event.deltaY);
@@ -232,7 +217,6 @@ const handleWheel = (event) => {
     resetEdgeScrollIntent();
     event.preventDefault();
     panel.scrollBy({ top: deltaY, behavior: 'smooth' });
-    syncActivePanelFromScroll();
     return;
   }
 
@@ -240,8 +224,8 @@ const handleWheel = (event) => {
     if (canMoveDownFromPanel(panel) && activeIndex < panels.length - 1) {
       event.preventDefault();
       goToPanel(activeIndex + 1);
-      return;
     }
+    return;
   }
 
   if (canMoveUpFromPanel(panel) && activeIndex > 0) {
@@ -325,16 +309,22 @@ const setupGSAPAnimations = () => {
   // Create a function to animate reveal children for a panel
   const animatePanelChildren = (panel) => {
     const revealChildren = panel.querySelectorAll('.reveal-child');
-    const tl = gsap.timeline();
+    const tl = gsap.timeline({ paused: true });
 
     revealChildren.forEach((child, index) => {
-      tl.from(
+      tl.fromTo(
         child,
         {
           opacity: 0,
           y: 14,
+        },
+        {
+          opacity: 1,
+          y: 0,
           duration: REVEAL_DURATION_S,
           ease: 'power2.out',
+          immediateRender: false,
+          clearProps: 'opacity,transform',
         },
         index * REVEAL_STAGGER_S
       );
@@ -575,7 +565,6 @@ const setupPanelScrollSync = () => {
 
         updateHeaderState();
         updateParallax();
-        syncActivePanelFromScroll();
       },
       { passive: true }
     );
@@ -609,6 +598,7 @@ const init = () => {
     setupEducationHoverCards();
     setupProjectHoverPreview();
     applyPanelModeState();
+    syncRevealVisibility();
     updateHeaderState();
     updateProgress();
     updateDots();
