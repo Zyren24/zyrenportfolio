@@ -515,6 +515,19 @@ const applyPanelModeState = () => {
   });
 };
 
+const logStartupDiagnostics = () => {
+  console.log('Panels found:', panels.length);
+  console.log('GSAP available:', typeof gsap !== 'undefined' ? 'object' : 'undefined');
+
+  if (!panels.length) {
+    console.warn('No panels found. The page will fall back to normal scroll layout.');
+  }
+
+  if (typeof gsap === 'undefined') {
+    console.warn('GSAP not loaded. Animations will be skipped, but the page should still work.');
+  }
+};
+
 const setupPanelScrollSync = () => {
   panels.forEach((panel) => {
     panel.addEventListener(
@@ -541,6 +554,16 @@ if (menuToggle && siteNav) {
 
 const init = () => {
   try {
+    logStartupDiagnostics();
+
+    if (!panels.length) {
+      const yearEl = document.getElementById('year');
+      if (yearEl) {
+        yearEl.textContent = new Date().getFullYear();
+      }
+      return;
+    }
+
     setupRevealChildren();
     setupGSAPAnimations();
     setupDots();
