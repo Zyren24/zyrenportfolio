@@ -1,3 +1,5 @@
+console.log('SCRIPT RUNNING');
+
 const menuToggle = document.querySelector('.menu-toggle');
 const siteNav = document.querySelector('.site-nav');
 const siteHeader = document.querySelector('.site-header');
