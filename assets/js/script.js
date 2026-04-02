@@ -8,15 +8,17 @@ const panels = Array.from(document.querySelectorAll('main .section.panel'));
 const heroPhoto = document.querySelector('.hero-photo');
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const isMobileLayout = () => window.matchMedia('(max-width: 900px)').matches;
-const usePanels = () => !document.documentElement.classList.contains('simple-scroll') && !isMobileLayout();
 const PANEL_TRANSITION_MS = 720;
 const REVEAL_DURATION_S = 0.55;
 const REVEAL_STAGGER_S = 0.08;
 const REQUIRED_EDGE_SCROLLS = 2;
 const EDGE_SCROLL_RESET_MS = 1500;
+const shouldUseNativeScroll = () =>
+  window.matchMedia('(max-width: 1024px), (hover: none), (pointer: coarse)').matches;
 
 let activeIndex = 0;
 let isAnimating = false;
+let panelModeEnabled = false;
 let touchStartY = 0;
 let edgeScrollIntent = {
   panelIndex: -1,
@@ -96,12 +98,22 @@ const updateHeaderState = () => {
     return;
   }
 
+   if (!panelModeEnabled) {
+    siteHeader.classList.toggle('scrolled', window.scrollY > 12);
+    return;
+  }
+
   const currentPanel = panels[activeIndex];
   const panelScroll = currentPanel ? currentPanel.scrollTop : 0;
   siteHeader.classList.toggle('scrolled', activeIndex > 0 || panelScroll > 12);
 };
 
 const updateSectionFitClasses = () => {
+  if (!panelModeEnabled) {
+    panels.forEach((panel) => panel.classList.remove('fits-viewport'));
+    return;
+  }
+
   panels.forEach((panel) => {
     // Center only if the whole panel content fits in one screen.
     const fitsViewport = panel.scrollHeight <= panel.clientHeight + 8;
@@ -109,8 +121,73 @@ const updateSectionFitClasses = () => {
   });
 };
 
+const clearPanelTransforms = () => {
+  panels.forEach((panel) => {
+    panel.style.transform = '';
+    panel.classList.remove('is-active', 'is-neighbor', 'fits-viewport');
+  });
+};
+
+const enablePanelMode = () => {
+  if (panelModeEnabled || !panels.length) {
+    return;
+  }
+
+  panelModeEnabled = true;
+  document.documentElement.classList.add('panels-ready');
+  goToPanel(activeIndex, true);
+  updateSectionFitClasses();
+};
+
+const disablePanelMode = () => {
+  if (!panelModeEnabled) {
+    return;
+  }
+
+  panelModeEnabled = false;
+  document.documentElement.classList.remove('panels-ready');
+  clearPanelTransforms();
+  resetEdgeScrollIntent();
+  isAnimating = false;
+
+  if (location.hash) {
+    const hashIndex = panels.findIndex((panel) => `#${panel.id}` === location.hash);
+    if (hashIndex >= 0) {
+      activeIndex = hashIndex;
+      activateNavById(panels[hashIndex].id);
+    }
+  }
+
+  updateProgress();
+  updateDots();
+  updateHeaderState();
+};
+
+const syncScrollMode = () => {
+  if (shouldUseNativeScroll()) {
+    disablePanelMode();
+    return;
+  }
+
+  enablePanelMode();
+};
+
 const goToPanel = (nextIndex, immediate = false) => {
   const clamped = Math.max(0, Math.min(nextIndex, panels.length - 1));
+
+  if (!panelModeEnabled) {
+    activeIndex = clamped;
+    const activePanel = panels[activeIndex];
+    if (activePanel) {
+      activePanel.scrollIntoView({ behavior: immediate || prefersReducedMotion ? 'auto' : 'smooth', block: 'start' });
+      if (activePanel.id) {
+        activateNavById(activePanel.id);
+      }
+    }
+    updateHeaderState();
+    return;
+  }
+
   if (clamped === activeIndex && !immediate) {
     return;
   }
@@ -152,7 +229,7 @@ const canMoveDownFromPanel = (panel) => panel.scrollTop + panel.clientHeight >= 
 const canMoveUpFromPanel = (panel) => panel.scrollTop <= 2;
 
 const handleWheel = (event) => {
-  if (!usePanels() || isAnimating || !panels.length) {
+  if (!panelModeEnabled || isMobileLayout() || isAnimating || !panels.length) {
     return;
   }
 
@@ -212,7 +289,7 @@ const handleWheel = (event) => {
 };
 
 const handleTouchStart = (event) => {
-  if (!usePanels()) {
+  if (!panelModeEnabled || isMobileLayout()) {
     return;
   }
 
@@ -220,7 +297,7 @@ const handleTouchStart = (event) => {
 };
 
 const handleTouchEnd = (event) => {
-  if (!usePanels() || isAnimating || !panels.length) {
+  if (!panelModeEnabled || isMobileLayout() || isAnimating || !panels.length) {
     return;
   }
 
@@ -243,7 +320,7 @@ const handleTouchEnd = (event) => {
 };
 
 const handleKeyboard = (event) => {
-  if (!usePanels() || isAnimating || !panels.length) {
+  if (!panelModeEnabled || isMobileLayout() || isAnimating || !panels.length) {
     return;
   }
 
@@ -453,17 +530,6 @@ const setupNavClicks = () => {
         return;
       }
 
-      if (!usePanels()) {
-        if (siteNav) {
-          siteNav.classList.remove('open');
-        }
-
-        if (menuToggle) {
-          menuToggle.setAttribute('aria-expanded', 'false');
-        }
-        return;
-      }
-
       if (targetId === '#home') {
         event.preventDefault();
         goToPanel(0);
@@ -484,6 +550,18 @@ const setupNavClicks = () => {
         return;
       }
 
+      if (!panelModeEnabled) {
+        if (siteNav) {
+          siteNav.classList.remove('open');
+        }
+
+        if (menuToggle) {
+          menuToggle.setAttribute('aria-expanded', 'false');
+        }
+
+        return;
+      }
+
       event.preventDefault();
       goToPanel(targetIndex);
 
@@ -499,10 +577,6 @@ const setupNavClicks = () => {
 };
 
 const setupPanelScrollSync = () => {
-  if (!usePanels()) {
-    return;
-  }
-
   panels.forEach((panel) => {
     panel.addEventListener(
       'scroll',
@@ -526,32 +600,28 @@ if (menuToggle && siteNav) {
   });
 }
 
-const shouldUsePanels = usePanels();
-
 setupRevealChildren();
 setupGSAPAnimations();
+setupDots();
 setupNavClicks();
+setupPanelScrollSync();
 setupEducationHoverCards();
 setupProjectHoverPreview();
+syncScrollMode();
+goToPanel(0, true);
 
-if (shouldUsePanels) {
-  setupDots();
-  setupPanelScrollSync();
-  document.documentElement.classList.add('panels-ready');
-  goToPanel(0, true);
+window.addEventListener('wheel', handleWheel, { passive: false });
+window.addEventListener('touchstart', handleTouchStart, { passive: true });
+window.addEventListener('touchend', handleTouchEnd, { passive: true });
+window.addEventListener('keydown', handleKeyboard);
+window.addEventListener('scroll', updateHeaderState, { passive: true });
+window.addEventListener('resize', () => {
+  syncScrollMode();
+  setPanelTransforms();
+  updateHeaderState();
+  updateProgress();
+  updateDots();
   updateSectionFitClasses();
-
-  window.addEventListener('wheel', handleWheel, { passive: false });
-  window.addEventListener('touchstart', handleTouchStart, { passive: true });
-  window.addEventListener('touchend', handleTouchEnd, { passive: true });
-  window.addEventListener('keydown', handleKeyboard);
-  window.addEventListener('resize', () => {
-    setPanelTransforms();
-    updateHeaderState();
-    updateProgress();
-    updateDots();
-    updateSectionFitClasses();
-  });
-}
+});
 
 document.getElementById('year').textContent = new Date().getFullYear();
