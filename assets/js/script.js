@@ -83,12 +83,14 @@ const updateDots = () => {
 
 const setPanelTransforms = () => {
   panels.forEach((panel, index) => {
-    if (index === activeIndex) {
-      panel.classList.add('is-active');
-    } else {
-      panel.classList.remove('is-active');
-    }
+    const offset = (index - activeIndex) * 100;
+    panel.style.transform = `translateY(${offset}%) scale(${index === activeIndex ? 1 : 0.97})`;
+    panel.classList.toggle('is-active', index === activeIndex);
     panel.classList.toggle('is-neighbor', Math.abs(index - activeIndex) === 1);
+
+    if (index !== activeIndex) {
+      panel.scrollTo({ top: 0, behavior: 'auto' });
+    }
   });
 };
 
@@ -115,8 +117,6 @@ const goToPanel = (nextIndex, immediate = false) => {
   if (clamped === activeIndex && !immediate) {
     return;
   }
-
-  console.log('Active index:', clamped);
 
   activeIndex = clamped;
   setPanelTransforms();
