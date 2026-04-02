@@ -32,7 +32,8 @@ body {
   background: radial-gradient(circle at top right, rgba(116, 141, 146, 0.34) 0%, transparent 36%),
     radial-gradient(circle at 12% 28%, rgba(18, 78, 102, 0.24) 0%, transparent 34%), var(--bg);
   line-height: 1.6;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .scroll-progress {
@@ -165,7 +166,7 @@ main {
   margin-top: 0;
   padding: calc(var(--panel-padding) + var(--section-top-gap)) var(--panel-padding) var(--panel-padding);
   display: block;
-  overflow-y: auto;
+  overflow: visible;
   scrollbar-width: thin;
   background: transparent;
   border: none;
@@ -998,40 +999,6 @@ h1 span {
 
 .panels-ready .section.visible .reveal-child.reveal-scale {
   transform: translateY(0) scale(1);
-}
-
-.simple-scroll body {
-  overflow-y: auto;
-  overflow-x: hidden;
-}
-
-.simple-scroll main {
-  height: auto;
-  overflow: visible;
-}
-
-.simple-scroll .section {
-  position: static;
-  opacity: 1;
-  transform: none;
-  pointer-events: auto;
-  display: block;
-  margin-top: clamp(1.2rem, 3vw, 2rem);
-  padding-top: clamp(0.85rem, 2.6vw, 1.2rem);
-}
-
-.simple-scroll .hero {
-  margin-top: 1rem;
-}
-
-.simple-scroll .hero-scroll-hint {
-  position: static;
-  transform: none;
-  margin-top: 0.85rem;
-}
-
-.simple-scroll .fp-dots {
-  display: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
