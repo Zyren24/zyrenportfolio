@@ -151,8 +151,41 @@ const goToPanel = (nextIndex, immediate = false) => {
   }
 };
 
-const canMoveDownFromPanel = (panel) => panel.scrollTop + panel.clientHeight >= panel.scrollHeight - 4;
-const canMoveUpFromPanel = (panel) => panel.scrollTop <= 2;
+const canMoveDownFromPanel = (panel) => {
+  if (!panel) {
+    return false;
+  }
+
+  return Math.ceil(panel.scrollTop + panel.clientHeight) >= panel.scrollHeight - 12;
+};
+
+const canMoveUpFromPanel = (panel) => {
+  if (!panel) {
+    return false;
+  }
+
+  return panel.scrollTop <= 12;
+};
+
+const syncActivePanelFromScroll = () => {
+  if (!panelModeEnabled || isMobileLayout() || !panels.length) {
+    return;
+  }
+
+  const panel = panels[activeIndex];
+  if (!panel) {
+    return;
+  }
+
+  if (canMoveUpFromPanel(panel) && activeIndex > 0) {
+    goToPanel(activeIndex - 1);
+    return;
+  }
+
+  if (canMoveDownFromPanel(panel) && activeIndex < panels.length - 1) {
+    goToPanel(activeIndex + 1);
+  }
+};
 
 const handleWheel = (event) => {
   console.log('wheel:', event.deltaY);
@@ -199,6 +232,7 @@ const handleWheel = (event) => {
     resetEdgeScrollIntent();
     event.preventDefault();
     panel.scrollBy({ top: deltaY, behavior: 'smooth' });
+    syncActivePanelFromScroll();
     return;
   }
 
@@ -206,8 +240,8 @@ const handleWheel = (event) => {
     if (canMoveDownFromPanel(panel) && activeIndex < panels.length - 1) {
       event.preventDefault();
       goToPanel(activeIndex + 1);
+      return;
     }
-    return;
   }
 
   if (canMoveUpFromPanel(panel) && activeIndex > 0) {
@@ -541,6 +575,7 @@ const setupPanelScrollSync = () => {
 
         updateHeaderState();
         updateParallax();
+        syncActivePanelFromScroll();
       },
       { passive: true }
     );
