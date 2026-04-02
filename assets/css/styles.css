@@ -37,7 +37,7 @@ body {
 }
 
 .panels-ready body {
-  overflow: hidden;
+  overflow: auto;
 }
 
 .scroll-progress {
