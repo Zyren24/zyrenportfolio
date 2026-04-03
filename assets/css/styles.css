@@ -1205,8 +1205,9 @@ h1 span {
     transform: none;
     pointer-events: auto;
     display: block;
-    margin-top: clamp(0.45rem, 1.7vw, 0.8rem);
-    padding-top: clamp(0.45rem, 1.6vw, 0.75rem);
+    margin-top: 0.25rem;
+    padding-top: 0.35rem;
+    overflow-y: visible;
   }
 
   .section:first-of-type,
@@ -1215,7 +1216,50 @@ h1 span {
   }
 
   .hero {
-    margin-top: 0.35rem;
+    margin-top: 0.15rem;
+  }
+
+  .focus .cards:has(.edu-card:hover) .edu-card,
+  .focus .cards:has(.edu-card:focus-within) .edu-card,
+  .focus .cards.is-hovering .edu-card,
+  .focus .edu-card:hover,
+  .focus .edu-card:focus-within,
+  .focus .edu-card.is-active {
+    display: flex;
+    grid-template-columns: none;
+    grid-template-rows: none;
+    gap: 0;
+    flex: initial;
+    padding: 0.95rem;
+    transform: none !important;
+    opacity: 1 !important;
+    filter: none !important;
+    box-shadow: none;
+    z-index: auto;
+  }
+
+  .focus .edu-card:hover .edu-photo-hover,
+  .focus .edu-card:focus-within .edu-photo-hover,
+  .focus .edu-card.is-active .edu-photo-hover {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 17px;
+    opacity: 0;
+  }
+
+  .focus .edu-card:hover .edu-title,
+  .focus .edu-card:focus-within .edu-title,
+  .focus .edu-card.is-active .edu-title,
+  .focus .edu-card:hover .edu-details,
+  .focus .edu-card:focus-within .edu-details,
+  .focus .edu-card.is-active .edu-details {
+    grid-column: auto;
+    padding-right: 0;
+    padding-left: 0;
+    margin-top: 0;
+    padding-top: 0;
   }
 
   .hero-scroll-hint {
