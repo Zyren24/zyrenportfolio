@@ -1205,12 +1205,17 @@ h1 span {
     transform: none;
     pointer-events: auto;
     display: block;
-    margin-top: clamp(1.2rem, 3vw, 2rem);
-    padding-top: clamp(0.85rem, 2.6vw, 1.2rem);
+    margin-top: clamp(0.45rem, 1.7vw, 0.8rem);
+    padding-top: clamp(0.45rem, 1.6vw, 0.75rem);
+  }
+
+  .section:first-of-type,
+  .panels-ready .section:first-of-type {
+    margin-top: 0;
   }
 
   .hero {
-    margin-top: 1rem;
+    margin-top: 0.35rem;
   }
 
   .hero-scroll-hint {
@@ -1287,7 +1292,7 @@ h1 span {
   }
 
   .section {
-    padding: 1rem 0.9rem;
+    padding: 0.85rem 0.9rem;
   }
 
   .hero-actions {
