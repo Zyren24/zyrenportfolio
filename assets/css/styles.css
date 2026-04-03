@@ -389,19 +389,13 @@ h1 span {
   background: rgba(18, 78, 102, 0.1);
 }
 
-.quick-stats:not(.row) {
+.quick-stats {
   margin: 0.95rem 0 0;
   padding: 0;
   list-style: none;
   display: grid;
   gap: 0.65rem;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-.quick-stats.row {
-  margin: 0.95rem 0 0;
-  padding: 0;
-  list-style: none;
 }
 
 .quick-stats li {
@@ -446,23 +440,16 @@ h1 span {
   margin-top: 0;
 }
 
-.cards:not(.row),
-.project-grid:not(.row) {
+.cards,
+.project-grid {
   display: grid;
   gap: 0.82rem;
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
-.project-list:not(.row) {
+.project-list {
   display: grid;
   gap: 0.82rem;
-}
-
-.project-list.row,
-.cards.row,
-.certificate-gallery.row {
-  margin-left: 0;
-  margin-right: 0;
 }
 
 .card,
@@ -537,7 +524,7 @@ h1 span {
   box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
 }
 
-.focus .cards:not(.row) {
+.focus .cards {
   display: flex;
   gap: 0.82rem;
 }
@@ -856,12 +843,8 @@ h1 span {
   object-fit: contain;
 }
 
-.ttec-screenshots:not(.row) {
+.ttec-screenshots {
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  align-items: stretch;
-}
-
-.ttec-screenshots.row {
   align-items: stretch;
 }
 
@@ -873,15 +856,11 @@ h1 span {
   display: block;
 }
 
-.certificate-gallery:not(.row) {
+.certificate-gallery {
   margin-top: 0.62rem;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 0.5rem;
-}
-
-.certificate-gallery.row {
-  margin-top: 0.62rem;
 }
 
 .certificate-list {
@@ -1191,13 +1170,13 @@ h1 span {
     transform: none;
   }
 
-  .cards:not(.row),
-  .project-grid:not(.row),
-  .quick-stats:not(.row) {
+  .cards,
+  .project-grid,
+  .quick-stats {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .certificate-gallery:not(.row) {
+  .certificate-gallery {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
@@ -1346,13 +1325,13 @@ h1 span {
     display: flex;
   }
 
-  .cards:not(.row),
-  .project-grid:not(.row),
-  .quick-stats:not(.row) {
+  .cards,
+  .project-grid,
+  .quick-stats {
     grid-template-columns: 1fr;
   }
 
-  .certificate-gallery:not(.row) {
+  .certificate-gallery {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
