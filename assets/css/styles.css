@@ -1105,6 +1105,32 @@ h1 span {
 }
 
 @media (max-width: 900px) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .ambient-shape,
+  .hero-scroll-arrow {
+    animation: none;
+  }
+
+  .reveal-child,
+  .reveal-visible,
+  .panels-ready .section .reveal-child,
+  .panels-ready .section .reveal-child.reveal-scale,
+  .panels-ready .section.visible .reveal-child,
+  .panels-ready .section.is-active .reveal-child {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .section,
+  .panels-ready .section {
+    transition: none !important;
+  }
+
   .focus .cards {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
