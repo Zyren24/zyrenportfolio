@@ -293,6 +293,7 @@ main {
   justify-self: start;
   border-radius: 20px;
   padding: 0.55rem;
+  aspect-ratio: 384 / 488;
   background: linear-gradient(130deg, rgba(18, 78, 102, 0.28), rgba(116, 141, 146, 0.42));
   box-shadow: 0 12px 28px rgba(15, 28, 42, 0.18);
 }
@@ -1148,14 +1149,15 @@ h1 span {
 
   .hero-layout {
     grid-template-columns: 1fr;
+    justify-items: center;
   }
 
   .hero-photo-frame {
-    width: 384px;
+    width: min(100%, 384px);
   }
 
-  .hero-photo {
-    height: 488px;
+  .hero-content {
+    width: 100%;
   }
 
   body,
@@ -1244,6 +1246,68 @@ h1 span {
     transform: none;
     width: 52px;
     height: 34px;
+  }
+
+  h1 {
+    font-size: clamp(1.5rem, 7.2vw, 2.05rem);
+  }
+
+  h1 span {
+    font-size: clamp(0.92rem, 4.3vw, 1.08rem);
+  }
+
+  h2 {
+    font-size: clamp(1.2rem, 5.6vw, 1.6rem);
+  }
+
+  .section {
+    padding: 1rem 0.9rem;
+  }
+
+  .hero-actions {
+    gap: 0.55rem;
+  }
+
+  .btn {
+    width: 100%;
+    padding: 0.68rem 1rem;
+  }
+
+  .quick-stats strong {
+    font-size: 0.88rem;
+  }
+
+  .quick-stats span {
+    font-size: 0.8rem;
+  }
+
+  .site-footer {
+    font-size: 0.86rem;
+    padding: 1rem 0.8rem;
+  }
+}
+
+@media (max-width: 420px) {
+  main {
+    width: min(100%, 94vw);
+  }
+
+  .site-header {
+    padding: 0.85rem 0.8rem;
+  }
+
+  .hero-photo-frame {
+    width: min(100%, 320px);
+    padding: 0.45rem;
+  }
+
+  .hero-scroll-hint {
+    font-size: 0.7rem;
+  }
+
+  .skill-tag {
+    font-size: 0.78rem;
+    padding: 0.28rem 0.56rem;
   }
 
 }
