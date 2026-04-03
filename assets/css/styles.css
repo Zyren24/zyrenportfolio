@@ -1105,6 +1105,13 @@ h1 span {
 }
 
 @media (max-width: 900px) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+
   html {
     scroll-behavior: auto;
   }
@@ -1269,6 +1276,11 @@ h1 span {
   }
 
   .fp-dots {
+    display: none;
+  }
+
+  .scroll-progress,
+  .hero-scroll-hint {
     display: none;
   }
 
